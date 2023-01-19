@@ -7,7 +7,7 @@ function Example() {
     scene.background = new THREE.Color(0x004fff);
   
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/ window.innerHeight, 0.1, 10000)
-    camera.position.z = 3
+    camera.position.z = 15
     
 
     const textureLoader = new THREE.TextureLoader();
@@ -16,6 +16,7 @@ function Example() {
     const textureNormal = textureLoader.load('3d/tree027/Wood_027_Normal.jpg')
     const textureHeight = textureLoader.load('3d/tree027/Wood_027_Height.jpg')
     const textureRoughness = textureLoader.load('3d/tree027/Wood_027_Roughness.jpg')
+    const heart = textureLoader.load('3d/tree027/heart2.png')
     
 
     const loader = new GLTFLoader();
@@ -80,6 +81,57 @@ function Example() {
     cube2.position.x = -1
     scene.add(cube2)
     
+
+
+
+
+    //heart
+    const shape = new THREE.Shape();
+
+    const x = 2.5, y= 0;
+    shape.moveTo(x + 2.5, y + 2.5);
+    shape.bezierCurveTo(x + 2.5, y + 2.5, x + 2, y, x, y);
+    shape.bezierCurveTo(x - 3, y, x - 3, y + 3.5, x - 3, y + 3.5);
+    shape.bezierCurveTo(x - 3, y + 5.5, x - 1.5, y + 7.7, x + 2.5, y + 9.5);
+    shape.bezierCurveTo(x + 6, y + 7.7, x + 8, y + 4.5, x + 8, y + 3.5);
+    shape.bezierCurveTo(x + 8, y + 3.5, x + 8, y, x + 5, y);
+    shape.bezierCurveTo(x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5);
+
+    // ShapeGeometry의 생성자에 인자로 shape 객체를 전달함
+    const geometry = new THREE.ShapeGeometry(shape);
+
+    // 회색 색상의 재질로 mesh 타입 오브젝트 생성
+    
+    heart.repeat.set(0.1, 0.1)
+
+    const fillMaterial = new THREE.MeshPhongMaterial({ map: heart});
+    const cube4 = new THREE.Mesh(geometry, fillMaterial);
+
+    // 노란색 선 재질 생성
+    const lineMaterial = new THREE.LineBasicMaterial({color: 0xffff00});
+    // 앞에서 만든 geometry를 이용해 line타입 오브젝트 생성
+    /* 
+    WireframeGeometry 클래스: 와이어프레임 형태로 지오메트리 표현
+    만약 WireframeGeometry 적용하지 않고 생성하면 모델의 모든 외곽선이 표시되지 않음.
+    */
+    const line = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geometry), lineMaterial);
+    
+    // mesh 오브젝트와 line 오브젝트를 하나의 오브젝트로 다루기 위해 그룹으로 묶음
+    const group = new THREE.Group()
+    /*
+    cube를 삭제하면 노란색 line만 보임,
+    line을 삭제하면 회색 cube만 보임
+    */
+    group.add(cube4);
+    //group.add(line);
+    
+    // 그룹 객체를 scene에 추가
+    scene.add(group);
+
+
+
+
     //light
     const Light1 = new THREE.DirectionalLight(0xffffff, 0.5)    //백색광, 세기: 0.5
     Light1.position.set(1, 1, 1)    //ㅇ위치
